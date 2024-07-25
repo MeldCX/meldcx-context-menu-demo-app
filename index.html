@@ -108,6 +108,7 @@
             box-sizing: border-box;
             resize: none;
             font-size: 1em;
+            margin-top: 2em;
         }
 
         .input-test {
@@ -142,15 +143,15 @@
             <div class="test-area">
                 <div class="input-test">
                     <span><strong>Please try to copy and paste the statement.</strong></span>
-                    <textarea type="text" id="first-text-area" name="first-text-area" disabled style="margin-top: 2em">To be happy at home is the ultimate result of all ambition. -Samuel Johnson</textarea>
+                    <textarea type="text" id="first-text-area" name="first-text-area" disabled>To be happy at home is the ultimate result of all ambition. -Samuel Johnson</textarea>
                 
-                    <textarea type="text" id="second-text-area" name="second-text-area" style="margin-top: 2em"></textarea>
+                    <textarea type="text" id="second-text-area" name="second-text-area"></textarea>
                 </div>
             </div>
         </div>
 
         <script>
-            const isHighlighting = () => 
+            const isHighlighted = () => 
                 // detects mouse is highlighting a text
                 window.getSelection && window.getSelection().type === 'Range'
             ;
@@ -167,20 +168,15 @@
                 const copyPasteAllowed = document.getElementById('enable-copy-paste').checked === true;
                 if (!copyPasteAllowed) {
                     e.preventDefault();
-                    if (!isHighlighting()) {
-
-                        // e.target.setSelectionRange(e.target.value.length, e.target.value.length)
-                    }
-                    else if (window.getSelection && isHighlighting()) {window.getSelection().removeAllRanges();}
+                    if (window.getSelection && isHighlighted()) {window.getSelection().removeAllRanges();}
                     else if (document.selection) {document.selection.empty();}
                 }
             }
 
             const preventSelectionOnClick = (e) => {
-                if (!isHighlighting()) {
+                if (!isHighlighted()) {
                     e.target.setSelectionRange(e.target.value.length, e.target.value.length)
                 }
-                onClick(e)
             }
 
             window.addEventListener("load", () => {
@@ -188,13 +184,22 @@
                 document.getElementById("first-text-area").oncut = onCopyCutPasteInput;
                 document.getElementById("first-text-area").onpaste = onCopyCutPasteInput;
                 document.getElementById("first-text-area").onselect = preventSelection;
-                document.getElementById("first-text-area").onclick = preventSelectionOnClick;
 
                 document.getElementById("second-text-area").oncopy = onCopyCutPasteInput;
                 document.getElementById("second-text-area").oncut = onCopyCutPasteInput;
                 document.getElementById("second-text-area").onpaste = onCopyCutPasteInput;
                 document.getElementById("second-text-area").onselect = preventSelection;
                 document.getElementById("second-text-area").onclick = preventSelectionOnClick;
+
+                document.getElementById('enable-context-menu').addEventListener('change', (event) => {
+                    const element = event.target
+
+                    if (element.checked === true) {
+                        document.getElementById('first-text-area').style = "pointer-events: auto"
+                    } else {
+                        document.getElementById('first-text-area').style = "pointer-events: none"
+                    }
+                })
             });
 
             document.body.addEventListener('contextmenu', e => {
