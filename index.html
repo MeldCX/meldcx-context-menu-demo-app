@@ -197,7 +197,7 @@
 
             const preventSelectionOnClick = (e) => {
                 onLongPress(e.target, () => {
-                    if (document.getElementById("enable-context-menu").checked !== true) {
+                    if (document.getElementById("enable-copy-paste").checked !== true) {
                         setTimeout(() => {
                             window.getSelection().removeAllRanges();
                         }, 200)
