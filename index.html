@@ -168,13 +168,42 @@
                 const copyPasteAllowed = document.getElementById('enable-copy-paste').checked === true;
                 if (!copyPasteAllowed) {
                     e.preventDefault();
-                    if (window.getSelection && isHighlighted()) {window.getSelection().removeAllRanges();}
+                    if (!isHighlighted()) {
+
+                        // e.target.setSelectionRange(e.target.value.length, e.target.value.length)
+                    }
+                    else if (window.getSelection && isHighlighted()) {window.getSelection().removeAllRanges();}
                     else if (document.selection) {document.selection.empty();}
                 }
             }
 
+            function onLongPress(element, callback) {
+                let timer;
+
+                element.addEventListener('touchstart', () => { 
+                    timer = setTimeout(() => {
+                    timer = null;
+                    callback();
+                    }, 500);
+                });
+
+                function cancel() {
+                    clearTimeout(timer);
+                }
+
+                element.addEventListener('touchend', cancel);
+                element.addEventListener('touchmove', cancel);
+            }
+
             const preventSelectionOnClick = (e) => {
-                if (!isHighlighted()) {
+                onLongPress(e.target, () => {
+                    if (document.getElementById("enable-context-menu").checked !== true) {
+                        setTimeout(() => {
+                            window.getSelection().removeAllRanges();
+                        }, 200)
+                    }
+                });
+                if (!isHighlighted() && e.detail > 1) {
                     e.target.setSelectionRange(e.target.value.length, e.target.value.length)
                 }
             }
